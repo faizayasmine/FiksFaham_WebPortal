@@ -28,16 +28,18 @@ $timestamp = Get-Date -Format "yyyyMMdd_HHmm"
 $zipFileName = "FiksFaham_AIStudio_$timestamp.zip"
 $zipPath = Join-Path $outFolder $zipFileName
 
-if (Test-Path $zipPath) {
-    Remove-Item -Path $zipPath -Force
-}
+# Pastikan selalu hanya tersisa 1 ZIP terbaru di folder output
+Get-ChildItem -Path $outFolder -Filter "FiksFaham_AIStudio_*.zip" -File -ErrorAction SilentlyContinue |
+    Remove-Item -Force
 
 $excludedDirNames = @(
-    ".git", ".gradle", ".kotlin", ".idea", "build", "dist", "web-portal", "node_modules"
+    ".git", ".github", ".aistudio", ".gradle", ".kotlin", ".idea", "build", "dist", "docs", "public", "web-portal", "node_modules"
 )
 
 $excludedRelativeDirs = @(
     "app/build",
+    "docs",
+    "public",
     "web-portal"
 )
 

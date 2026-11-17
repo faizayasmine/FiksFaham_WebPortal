@@ -32,3 +32,4 @@ web-portal/dist/
 web-portal/.env
 web-portal/.env.*
 !web-portal/.env.example
+*.tsbuildinfo
