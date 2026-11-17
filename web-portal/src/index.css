@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    --fiks-bg: #f7f3eb;
+    --fiks-surface: #ffffff;
+    --fiks-border: #e8dfd3;
+    --fiks-text: #1e1713;
+    --fiks-muted: #6b5a4d;
+    --fiks-primary: #e25a20;
+    --fiks-primary-dark: #c0440e;
+    --fiks-accent: #f8b259;
+    --fiks-decor: #a58af0;
+  }
+
+  .dark {
+    --fiks-bg: #161311;
+    --fiks-surface: #25201c;
+    --fiks-border: #3a322c;
+    --fiks-text: #f7f3eb;
+    --fiks-muted: #c4b8aa;
+  }
+
+  body {
+    font-family: "Poppins", system-ui, -apple-system, sans-serif;
+    background-color: var(--fiks-bg);
+    color: var(--fiks-text);
+  }
+}

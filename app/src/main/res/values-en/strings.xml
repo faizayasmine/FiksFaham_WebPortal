@@ -1,0 +1,242 @@
+<resources>
+    <string name="app_name">FiksFaham</string>
+
+    <!-- Navigation Tabs -->
+    <string name="tab_home">Home</string>
+    <string name="tab_course">Courses</string>
+    <string name="tab_leaderboard">Rankings</string>
+    <string name="tab_news">Updates</string>
+    <string name="tab_profile">Profile</string>
+
+    <!-- Common UI Labels -->
+    <string name="common_cancel">Cancel</string>
+    <string name="common_save">Save</string>
+    <string name="common_close">Close</string>
+    <string name="common_back">Back</string>
+    <string name="common_continue">Continue</string>
+    <string name="common_retry">Retry</string>
+    <string name="common_share">Share</string>
+    <string name="common_download">Download</string>
+    <string name="common_status">Status</string>
+    <string name="common_score">Score</string>
+    <string name="common_passed">Passed</string>
+    <string name="common_failed">Failed</string>
+    <string name="common_locked">Locked</string>
+    <string name="common_available">Available</string>
+    <string name="common_loading">Loading...</string>
+
+    <!-- Accessibility & Theme Screen (Tahap 8A) -->
+    <string name="accessibility_title">Accessibility Settings</string>
+    <string name="accessibility_subtitle">Customize theme appearance and interface language preferences for comfortable learning.</string>
+    <string name="theme_section_title">Theme &amp; Appearance</string>
+    <string name="theme_section_desc">Choose a comfortable visual theme suited for various lighting conditions.</string>
+    <string name="theme_system">System default</string>
+    <string name="theme_system_desc">Automatically follow your device theme settings (Default)</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_light_desc">Bright warm cream palette with crisp, clear contrast</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_dark_desc">Calm dark charcoal palette easy on the eyes in low-light environments</string>
+    <string name="language_section_title">Interface Language</string>
+    <string name="language_section_desc">Select the display language for app navigation and system settings.</string>
+    <string name="lang_indonesian">Bahasa Indonesia</string>
+    <string name="lang_indonesian_desc">Primary interface language of FiksFaham (Default)</string>
+    <string name="lang_english">English</string>
+    <string name="lang_english_desc">English user interface for international learning</string>
+    <string name="content_preserved_notice">Note: Interface labels are localized. Course materials, subtopics, quiz questions, and curriculum titles remain in their original form.</string>
+    <string name="contrast_preview_title">Readability &amp; Contrast Preview</string>
+    <string name="contrast_preview_desc">All typography meets Material 3 and WCAG AA contrast standards for optimal readability in both Light and Dark modes.</string>
+    <string name="preview_badge_active">Active Theme</string>
+    <string name="preview_sample_heading">FiksFaham: User Interface &amp; Experience Design</string>
+    <string name="preview_sample_body">Enhance your digital product design thinking through structured modules and certified evaluations.</string>
+
+    <!-- Account Security Screen (Tahap 8B) -->
+    <string name="security_title">Account Security</string>
+    <string name="security_subtitle">Manage your password, active login sessions, and personal account privacy.</string>
+    <string name="security_change_password">Change Password</string>
+    <string name="security_change_password_desc">Update your password securely by reauthenticating your current password.</string>
+    <string name="security_sign_out">Sign Out</string>
+    <string name="security_sign_out_desc">Safely terminate your active session on this device.</string>
+    <string name="security_delete_account">Delete Account</string>
+    <string name="security_delete_account_desc">Permanently delete your account along with your files, scores, and records.</string>
+    <string name="security_old_password">Current Password</string>
+    <string name="security_new_password">New Password</string>
+    <string name="security_confirm_new_password">Confirm New Password</string>
+    <string name="security_btn_save_password">Update Password</string>
+    <string name="security_password_updated">Password successfully updated!</string>
+    <string name="security_err_old_password_wrong">Incorrect current password. Please verify and try again.</string>
+    <string name="security_err_password_weak">New password is too weak. Minimum 6 characters required.</string>
+    <string name="security_err_reauth_required">Your session has expired. Please sign out and sign in again.</string>
+    <string name="security_err_password_match">New password and confirmation do not match!</string>
+    <string name="security_dialog_logout_title">Confirm Sign Out</string>
+    <string name="security_dialog_logout_desc">Are you sure you want to sign out? You will need to log back in to access your learning progress.</string>
+    <string name="security_dialog_delete_title">Permanently Delete Account</string>
+    <string name="security_dialog_delete_warning">Warning: This action cannot be undone. All your files in Firebase Storage (photos &amp; capstone submissions), Firestore records (profile, scores), and local data will be permanently wiped.</string>
+    <string name="security_delete_confirm_prompt">Type \"HAPUS\" to confirm:</string>
+    <string name="security_delete_enter_password">Enter your account password for security verification:</string>
+    <string name="security_btn_confirm_delete">Delete My Account</string>
+    <string name="security_delete_success">Your account and all associated data have been completely deleted.</string>
+    <string name="security_err_delete_failed">Failed to delete account: %1$s. Your authentication account remains secure.</string>
+
+    <!-- Certificate Screen (Tahap 8C) -->
+    <string name="certificate_title">Certificates of Completion</string>
+    <string name="certificate_subtitle">Official verified certificates for subject completion and UI/UX Capstone Projects.</string>
+    <string name="certificate_status_available">Ready for Download</string>
+    <string name="certificate_status_locked">Certificate Locked</string>
+    <string name="certificate_btn_download">Save / Share PDF</string>
+    <string name="certificate_empty_name_title">Profile Name Required</string>
+    <string name="certificate_empty_name_desc">To issue an official certificate, your full name must be filled in your profile.</string>
+    <string name="certificate_btn_edit_profile">Complete Name in Profile</string>
+    <string name="certificate_generating_pdf">Generating PDF certificate...</string>
+    <string name="certificate_share_chooser">Share FiksFaham Certificate</string>
+    <string name="certificate_reason_posttest_not_passed">Posttest has not been passed yet (minimum passing grade is 75).</string>
+    <string name="certificate_reason_capstone_not_submitted">Capstone Project submission is required.</string>
+    <string name="certificate_reason_capstone_under_review">Capstone Project is currently under mentor review.</string>
+    <string name="certificate_reason_capstone_score_low">Capstone grade did not meet passing standard (%1$d/100, minimum 75).</string>
+
+    <!-- Auth & Onboarding Screen (Tahap 2) -->
+    <string name="auth_login_title">Welcome back</string>
+    <string name="auth_login_subtitle">Sign in to continue</string>
+    <string name="auth_btn_login">Log In</string>
+    <string name="auth_signup_title">Create Account</string>
+    <string name="auth_signup_subtitle">Fill in your details to start learning</string>
+    <string name="auth_btn_signup">Sign Up</string>
+    <string name="auth_field_email">Email</string>
+    <string name="auth_field_email_placeholder">name@email.com</string>
+    <string name="auth_field_password">Password</string>
+    <string name="auth_field_password_placeholder">Enter your password</string>
+    <string name="auth_field_name">Full Name</string>
+    <string name="auth_field_name_placeholder">Enter your full name</string>
+    <string name="auth_field_instansi">Institution</string>
+    <string name="auth_field_instansi_placeholder">University / Institution / School</string>
+    <string name="auth_field_confirm_password">Confirm Password</string>
+    <string name="auth_field_confirm_password_placeholder">Repeat your password</string>
+    <string name="auth_forgot_password">Forgot password?</string>
+    <string name="auth_no_account">Don\'t have an account?</string>
+    <string name="auth_has_account">Already have an account?</string>
+    <string name="auth_link_signup">Sign Up</string>
+    <string name="auth_link_login">Log In</string>
+    <string name="auth_back_to_login">Back to Log In</string>
+    <string name="auth_loading">Processing...</string>
+    <string name="auth_logo_content_desc">FiksFaham Logo</string>
+    <string name="auth_password_show">Show password</string>
+    <string name="auth_password_hide">Hide password</string>
+    <string name="auth_password_strength_label">Password Strength:</string>
+    <string name="auth_password_strength_weak">Weak</string>
+    <string name="auth_password_strength_medium">Medium</string>
+    <string name="auth_password_strength_strong">Strong</string>
+    <string name="auth_err_email_empty">Email cannot be empty</string>
+    <string name="auth_err_email_invalid">Invalid email format (e.g., name@email.com)</string>
+    <string name="auth_err_password_empty">Password cannot be empty</string>
+    <string name="auth_err_password_short">Password must be at least 6 characters</string>
+    <string name="auth_err_name_empty">Full name cannot be empty</string>
+    <string name="auth_err_instansi_empty">Institution cannot be empty</string>
+    <string name="auth_err_password_mismatch">Confirm password does not match password</string>
+
+    <!-- Revisi Bagian 1: Profil -->
+    <string name="profile_edit_title">Edit Profile</string>
+    <string name="profile_camera_btn">Camera</string>
+    <string name="profile_gallery_btn">Gallery</string>
+    <string name="profile_photo_camera_selected">Camera Photo Selected</string>
+    <string name="profile_photo_gallery_selected">Gallery Photo Selected</string>
+    <string name="profile_username_label">Username / Full Name</string>
+    <string name="profile_email_readonly_hint">Email cannot be changed here</string>
+    <string name="profile_recap_posttest_title">Evaluation Score Recap (Post-Test)</string>
+    <string name="profile_recap_posttest_subtitle">Tap the card to view complete Post-Test scores per subject</string>
+    <string name="profile_recap_posttest_latest_label">Latest Post-Test Score</string>
+    <string name="profile_recap_posttest_empty">No Post-Test score yet</string>
+    <string name="profile_recap_posttest_tap_hint">Tap to view full breakdown</string>
+    <string name="profile_recap_posttest_modal_title">Complete Post-Test Scores</string>
+    <string name="profile_recap_posttest_passed">Passed</string>
+    <string name="profile_recap_posttest_not_passed">Not Passed</string>
+    <string name="profile_recap_posttest_best">Best: %1$d/100</string>
+    <string name="profile_recap_posttest_latest">Latest: %1$d/100</string>
+    <string name="profile_section_achievements">Learning Achievements</string>
+    <string name="profile_menu_saved_modules">Saved Modules</string>
+    <string name="profile_menu_saved_modules_sub">View subtopics you bookmarked for later</string>
+    <string name="profile_menu_certificates">Learning Certificates</string>
+    <string name="profile_menu_certificates_sub">Download &amp; share your verified PDF certificates</string>
+    <string name="profile_section_advanced">Advanced Settings</string>
+    <string name="profile_menu_language">App Language</string>
+    <string name="profile_menu_theme">Dark and Light Mode</string>
+    <string name="profile_menu_security">Account Security</string>
+    <string name="profile_menu_security_sub">Change password and manage account safety</string>
+    <string name="profile_leaderboard_sub">Track Daily &amp; Monthly coin rankings</string>
+    <string name="profile_logout_btn">Sign Out</string>
+    <string name="profile_logout_sub">See you again! Your learning progress stays safely saved.</string>
+    <string name="profile_logout_dialog_title">Taking a Short Break?</string>
+    <string name="profile_logout_dialog_body">Are you sure you want to sign out right now? All your coins, certificates, and learning progress stay safely saved!</string>
+    <string name="profile_logout_confirm">Yes, Sign Out</string>
+    <string name="profile_logout_cancel">Keep Learning</string>
+
+    <!-- Revisi Bagian 2: Beranda Roadmap -->
+    <string name="home_roadmap_title">UI/UX Learning Path</string>
+    <string name="home_roadmap_subtitle">Follow subjects step-by-step up to the Capstone Project</string>
+    <string name="home_roadmap_here">You are here</string>
+    <string name="home_roadmap_done">Done</string>
+    <string name="home_roadmap_not_started">Not started</string>
+    <string name="home_roadmap_sub_progress">%1$d/%2$d subtopics</string>
+    <string name="home_roadmap_capstone_title">Final Capstone Project</string>
+    <string name="home_roadmap_capstone_locked">Finish Subjects 1–5 to unlock Capstone</string>
+    <string name="home_roadmap_capstone_open">Ready to build &amp; submit</string>
+    <string name="home_roadmap_capstone_review">Under mentor review</string>
+    <string name="home_roadmap_capstone_done">Final project passed</string>
+
+    <!-- Revisi Bagian 3: Burger Slider -->
+    <string name="drawer_menu_profile">Profile</string>
+    <string name="drawer_menu_gallery">Design Gallery</string>
+    <string name="drawer_menu_discussion">Discussion Space</string>
+    <string name="drawer_menu_leaderboard">Leaderboard</string>
+    <string name="drawer_menu_saved_modules">Saved Modules (%1$d)</string>
+    <string name="drawer_menu_certificates">Learning Certificates</string>
+    <string name="drawer_menu_advanced_settings">Advanced Settings</string>
+    <string name="drawer_menu_mentor">Mentor Menu</string>
+    <string name="drawer_discussion_picker_title">Select Discussion Subject</string>
+    <string name="drawer_discussion_picker_sub">Choose a subject to open its Q&amp;A discussion forum</string>
+
+    <!-- Revisi Bagian 4: Materi & Sub-Materi -->
+    <string name="course_screen_title">Learning Materials</string>
+    <string name="course_screen_subtitle">Select a subject to start learning</string>
+    <string name="subtopic_open_discussion">Subject Discussion</string>
+    <string name="subtopic_step_materi1">Material 1</string>
+    <string name="subtopic_step_materi2">Material 2</string>
+    <string name="subtopic_step_video">Video</string>
+    <string name="subtopic_quiz_popup_title">Proceed to Quiz?</string>
+    <string name="subtopic_quiz_popup_body">You have opened the reading materials and video page. Would you like to start the subtopic quiz now or later?</string>
+    <string name="subtopic_quiz_popup_now">Proceed to Quiz</string>
+    <string name="subtopic_quiz_popup_later">Later</string>
+
+    <!-- Revisi Bagian 5: Galeri, Tantangan Desain & Ruang Diskusi Q&A -->
+    <string name="gallery_like_own_forbidden">You cannot like your own design work.</string>
+    <string name="challenge_card_header">Design Challenge</string>
+    <string name="challenge_theme_label">Theme: %1$s</string>
+    <string name="challenge_period_label">Period: %1$s - %2$s</string>
+    <string name="challenge_status_active">Active</string>
+    <string name="challenge_status_ended">Ended</string>
+    <string name="challenge_join_btn">Join Challenge</string>
+    <string name="challenge_joined_badge">Joined</string>
+    <string name="challenge_manage_btn">Manage Challenge</string>
+    <string name="challenge_create_btn">Create Challenge</string>
+    <string name="challenge_pick_work_title">Select Your Public Work</string>
+    <string name="challenge_no_public_work">You have no public works yet. Set a design task to public in My Gallery first.</string>
+    <string name="challenge_winners_title">Top 3 Standings (Highest Like Points)</string>
+    <string name="discussion_title">Subject Discussion Space</string>
+    <string name="discussion_ask_title">Ask Mentors &amp; Peers</string>
+    <string name="discussion_question_title_hint">Question title (e.g., Button contrast hierarchy)</string>
+    <string name="discussion_question_body_hint">Write your question details about this subject...</string>
+    <string name="discussion_send_question">Post Question</string>
+    <string name="discussion_replies_count">%1$d Replies</string>
+    <string name="discussion_reply_hint">Write a helpful answer or reply...</string>
+    <string name="discussion_mark_helpful">Mark Helpful</string>
+    <string name="discussion_helpful_badge">Helpful Answer</string>
+    <string name="discussion_empty">No questions in this subject yet. Be the first to ask!</string>
+
+    <!-- Revisi Bagian 6: Leaderboard & Koin -->
+    <string name="leaderboard_tab_daily">Daily</string>
+    <string name="leaderboard_tab_monthly">Monthly</string>
+    <string name="leaderboard_daily_reset_wib">Resets automatically at 00:00 WIB (%1$s)</string>
+    <string name="leaderboard_monthly_period">Coins earned this month (%1$s WIB)</string>
+    <string name="leaderboard_your_position">Your Position: #%1$d</string>
+    <string name="leaderboard_outside_top50">Outside Top 50 • Pinned</string>
+    <string name="leaderboard_empty_title">No Coin Rankings Yet</string>
+    <string name="leaderboard_empty_body">Complete quizzes, posttests, design tasks, or challenges to earn coins!</string>
+</resources>

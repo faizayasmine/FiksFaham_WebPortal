@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="1000"
+    android:viewportHeight="1000">
+
+    <!-- Brown Background L-Shape (Fiks Monogram) -->
+    <path
+        android:fillColor="#BA5D2C"
+        android:pathData="M 436,376 L 610,376 A 53,53 0 0,0 610,270 L 385,270 A 55,55 0 0,0 330,325 L 330,670 A 53,53 0 0,0 436,670 L 436,376 Z" />
+
+    <!-- Peach Foreground Checkmark (Faham Validation) -->
+    <path
+        android:strokeColor="#F9AA4E"
+        android:strokeWidth="106"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M 356,564 L 426,634 L 625,435" />
+</vector>

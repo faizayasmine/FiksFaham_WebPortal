@@ -1,0 +1,73 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Helper function: Memeriksa apakah pengguna yang melakukan request adalah mentor di Firestore
+    function isAdmin() {
+      return request.auth != null && (
+        request.auth.token.role == 'superadmin' ||
+        firestore.exists(/databases/(default)/documents/admins/$(request.auth.uid)) ||
+        (firestore.exists(/databases/(default)/documents/staff/$(request.auth.uid)) &&
+         firestore.get(/databases/(default)/documents/staff/$(request.auth.uid)).data.aktif == true &&
+         firestore.get(/databases/(default)/documents/staff/$(request.auth.uid)).data.role == 'superadmin')
+      );
+    }
+
+    function isMentor() {
+      return request.auth != null && (
+        isAdmin() ||
+        request.auth.token.role in ['fasilitator', 'mentor'] ||
+        firestore.exists(/databases/(default)/documents/mentors/$(request.auth.uid)) ||
+        (firestore.exists(/databases/(default)/documents/staff/$(request.auth.uid)) &&
+         firestore.get(/databases/(default)/documents/staff/$(request.auth.uid)).data.aktif == true &&
+         firestore.get(/databases/(default)/documents/staff/$(request.auth.uid)).data.role in ['fasilitator', 'mentor', 'superadmin'])
+      );
+    }
+
+    function isAllowedImage() {
+      return request.resource.size <= 5 * 1024 * 1024 &&
+        request.resource.contentType.matches('image/.*');
+    }
+
+    function isAllowedDocumentOrImage() {
+      return request.resource.size <= 20 * 1024 * 1024 &&
+        (
+          request.resource.contentType.matches('image/.*') ||
+          request.resource.contentType == 'application/pdf' ||
+          request.resource.contentType == 'application/zip' ||
+          request.resource.contentType == 'application/octet-stream'
+        );
+    }
+
+    // Path foto profil: profile_photos/{uid}/{allPaths=**}
+    match /profile_photos/{uid}/{allPaths=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == uid && isAllowedImage();
+      allow delete: if request.auth != null && (request.auth.uid == uid || isAdmin());
+    }
+
+    // Path berkas capstone: capstone_files/{uid}/{materiId}/{namaFile}
+    match /capstone_files/{uid}/{materiId}/{allPaths=**} {
+      allow read: if request.auth != null && (request.auth.uid == uid || isMentor() || isAdmin());
+      allow write: if request.auth != null
+        && request.auth.uid == uid
+        && isAllowedDocumentOrImage()
+        && (
+          !firestore.exists(/databases/(default)/documents/capstone_submissions/$(uid + '_' + materiId)) ||
+          firestore.get(/databases/(default)/documents/capstone_submissions/$(uid + '_' + materiId)).data.status != 'approved'
+        );
+      allow delete: if request.auth != null && (request.auth.uid == uid || isAdmin());
+    }
+
+    // Path berkas tugas desain: design_task_files/{uid}/{allPaths=**}
+    match /design_task_files/{uid}/{allPaths=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == uid && isAllowedDocumentOrImage();
+      allow delete: if request.auth != null && (request.auth.uid == uid || isAdmin());
+    }
+
+    // Default deny untuk path lainnya
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

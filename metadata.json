@@ -1,0 +1,8 @@
+{
+  "name": "FiksFaham",
+  "description": "Aplikasi Pembelajaran Desain Grafis Bahan Ajar untuk Mahasiswa berbasis level, interaktif, dan terstruktur.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

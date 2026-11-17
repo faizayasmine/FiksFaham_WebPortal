@@ -1,0 +1,242 @@
+<resources>
+    <string name="app_name">FiksFaham</string>
+
+    <!-- Navigation Tabs -->
+    <string name="tab_home">Beranda</string>
+    <string name="tab_course">Materi</string>
+    <string name="tab_leaderboard">Peringkat</string>
+    <string name="tab_news">Kabar</string>
+    <string name="tab_profile">Profil</string>
+
+    <!-- Common UI Labels -->
+    <string name="common_cancel">Batal</string>
+    <string name="common_save">Simpan</string>
+    <string name="common_close">Tutup</string>
+    <string name="common_back">Kembali</string>
+    <string name="common_continue">Lanjut</string>
+    <string name="common_retry">Ulangi</string>
+    <string name="common_share">Bagikan</string>
+    <string name="common_download">Unduh</string>
+    <string name="common_status">Status</string>
+    <string name="common_score">Skor</string>
+    <string name="common_passed">Lulus</string>
+    <string name="common_failed">Belum Lulus</string>
+    <string name="common_locked">Terkunci</string>
+    <string name="common_available">Tersedia</string>
+    <string name="common_loading">Memuat...</string>
+
+    <!-- Accessibility & Theme Screen (Tahap 8A) -->
+    <string name="accessibility_title">Pengaturan Aksesibilitas</string>
+    <string name="accessibility_subtitle">Sesuaikan tampilan tema dan preferensi bahasa antarmuka sesuai kenyamanan belajar Anda.</string>
+    <string name="theme_section_title">Tampilan &amp; Tema</string>
+    <string name="theme_section_desc">Pilih tema visual yang nyaman di mata untuk berbagai kondisi pencahayaan.</string>
+    <string name="theme_system">Ikuti sistem</string>
+    <string name="theme_system_desc">Otomatis mengikuti preferensi tema pada perangkat Anda (Default)</string>
+    <string name="theme_light">Terang</string>
+    <string name="theme_light_desc">Tema warm cream cerah dengan kontras jernih dan segar di siang hari</string>
+    <string name="theme_dark">Gelap</string>
+    <string name="theme_dark_desc">Tema charcoal gelap yang teduh dan nyaman untuk mata di pencahayaan rendah</string>
+    <string name="language_section_title">Bahasa Antarmuka</string>
+    <string name="language_section_desc">Pilih bahasa teks antarmuka navigasi dan pengaturan aplikasi.</string>
+    <string name="lang_indonesian">Bahasa Indonesia</string>
+    <string name="lang_indonesian_desc">Bahasa utama antarmuka FiksFaham (Default)</string>
+    <string name="lang_english">English</string>
+    <string name="lang_english_desc">English user interface for international learning</string>
+    <string name="content_preserved_notice">Catatan: Teks antarmuka aplikasi diterjemahkan. Konten materi pembelajaran, modul, soal kuis, dan judul kurikulum dipertahankan sesuai aslinya.</string>
+    <string name="contrast_preview_title">Pratinjau Keterbacaan &amp; Kontras</string>
+    <string name="contrast_preview_desc">Semua teks telah mematuhi standar kontras Material 3 dan WCAG AA untuk keterbacaan optimal di mode Terang maupun Gelap.</string>
+    <string name="preview_badge_active">Tema Aktif</string>
+    <string name="preview_sample_heading">FiksFaham: Desain Antarmuka &amp; Pengalaman Pengguna</string>
+    <string name="preview_sample_body">Tingkatkan pemahaman konsep desain produk digital Anda melalui modul bertahap dan evaluasi yang teruji.</string>
+
+    <!-- Account Security Screen (Tahap 8B) -->
+    <string name="security_title">Keamanan Akun</string>
+    <string name="security_subtitle">Kelola kata sandi, sesi login aktif, dan kontrol privasi data akun Anda.</string>
+    <string name="security_change_password">Ubah Kata Sandi</string>
+    <string name="security_change_password_desc">Perbarui kata sandi akun dengan autentikasi ulang sandi lama.</string>
+    <string name="security_sign_out">Keluar Akun</string>
+    <string name="security_sign_out_desc">Akhiri sesi login aktif di perangkat ini dengan aman.</string>
+    <string name="security_delete_account">Hapus Akun</string>
+    <string name="security_delete_account_desc">Hapus akun secara permanen beserta berkas, nilai, dan dokumen Anda.</string>
+    <string name="security_old_password">Kata Sandi Lama</string>
+    <string name="security_new_password">Kata Sandi Baru</string>
+    <string name="security_confirm_new_password">Konfirmasi Kata Sandi Baru</string>
+    <string name="security_btn_save_password">Perbarui Kata Sandi</string>
+    <string name="security_password_updated">Kata sandi berhasil diperbarui!</string>
+    <string name="security_err_old_password_wrong">Kata sandi lama salah. Harap periksa kembali sandi Anda.</string>
+    <string name="security_err_password_weak">Kata sandi baru terlalu lemah. Minimal 6 karakter.</string>
+    <string name="security_err_reauth_required">Sesi telah kedaluwarsa. Silakan keluar dan masuk kembali.</string>
+    <string name="security_err_password_match">Kata sandi baru dan konfirmasi tidak cocok!</string>
+    <string name="security_dialog_logout_title">Konfirmasi Keluar Akun</string>
+    <string name="security_dialog_logout_desc">Apakah Anda yakin ingin keluar dari akun FiksFaham? Anda perlu masuk kembali untuk mengakses progres materi Anda.</string>
+    <string name="security_dialog_delete_title">Hapus Akun Secara Permanen</string>
+    <string name="security_dialog_delete_warning">Peringatan: Tindakan ini tidak dapat dibatalkan. Seluruh data Anda di Firebase Storage (foto &amp; berkas capstone), Firestore (profil, skor, submission), dan data lokal akan dihapus permanen.</string>
+    <string name="security_delete_confirm_prompt">Ketik kata \"HAPUS\" untuk mengonfirmasi:</string>
+    <string name="security_delete_enter_password">Masukkan kata sandi akun untuk verifikasi keamanan:</string>
+    <string name="security_btn_confirm_delete">Hapus Akun Saya</string>
+    <string name="security_delete_success">Akun Anda berhasil dihapus secara menyeluruh.</string>
+    <string name="security_err_delete_failed">Gagal menghapus akun: %1$s. Akun autentikasi Anda tetap aman.</string>
+
+    <!-- Certificate Screen (Tahap 8C) -->
+    <string name="certificate_title">Sertifikat Kelulusan</string>
+    <string name="certificate_subtitle">Sertifikat resmi kelulusan materi dan penyelesaian Capstone Project UI/UX.</string>
+    <string name="certificate_status_available">Sertifikat Siap Diunduh</string>
+    <string name="certificate_status_locked">Sertifikat Belum Terbuka</string>
+    <string name="certificate_btn_download">Simpan / Bagikan PDF</string>
+    <string name="certificate_empty_name_title">Nama Profil Masih Kosong</string>
+    <string name="certificate_empty_name_desc">Untuk menerbitkan sertifikat resmi, nama lengkap Anda harus tercantum pada profil akun.</string>
+    <string name="certificate_btn_edit_profile">Lengkapi Nama di Profil</string>
+    <string name="certificate_generating_pdf">Menyiapkan sertifikat PDF...</string>
+    <string name="certificate_share_chooser">Bagikan Sertifikat FiksFaham</string>
+    <string name="certificate_reason_posttest_not_passed">Posttest Materi belum lulus (passing grade minimal 75).</string>
+    <string name="certificate_reason_capstone_not_submitted">Tugas Capstone Project belum dikumpulkan.</string>
+    <string name="certificate_reason_capstone_under_review">Tugas Capstone sedang dalam peninjauan mentor.</string>
+    <string name="certificate_reason_capstone_score_low">Nilai Capstone belum memenuhi batas kelulusan (%1$d/100, minimal 75).</string>
+
+    <!-- Auth & Onboarding Screen (Tahap 2) -->
+    <string name="auth_login_title">Selamat datang kembali</string>
+    <string name="auth_login_subtitle">Masuk untuk melanjutkan</string>
+    <string name="auth_btn_login">Masuk</string>
+    <string name="auth_signup_title">Buat Akun</string>
+    <string name="auth_signup_subtitle">Lengkapi data untuk mulai belajar</string>
+    <string name="auth_btn_signup">Daftar</string>
+    <string name="auth_field_email">Email</string>
+    <string name="auth_field_email_placeholder">nama@email.com</string>
+    <string name="auth_field_password">Kata Sandi</string>
+    <string name="auth_field_password_placeholder">Masukkan kata sandi</string>
+    <string name="auth_field_name">Nama Lengkap</string>
+    <string name="auth_field_name_placeholder">Masukkan nama lengkap</string>
+    <string name="auth_field_instansi">Asal Instansi</string>
+    <string name="auth_field_instansi_placeholder">Universitas / Institusi / Sekolah</string>
+    <string name="auth_field_confirm_password">Konfirmasi Kata Sandi</string>
+    <string name="auth_field_confirm_password_placeholder">Ulangi kata sandi</string>
+    <string name="auth_forgot_password">Lupa sandi?</string>
+    <string name="auth_no_account">Belum punya akun?</string>
+    <string name="auth_has_account">Sudah punya akun?</string>
+    <string name="auth_link_signup">Daftar</string>
+    <string name="auth_link_login">Masuk</string>
+    <string name="auth_back_to_login">Kembali ke Masuk</string>
+    <string name="auth_loading">Memproses...</string>
+    <string name="auth_logo_content_desc">Logo FiksFaham</string>
+    <string name="auth_password_show">Tampilkan sandi</string>
+    <string name="auth_password_hide">Sembunyikan sandi</string>
+    <string name="auth_password_strength_label">Kekuatan Sandi:</string>
+    <string name="auth_password_strength_weak">Lemah</string>
+    <string name="auth_password_strength_medium">Sedang</string>
+    <string name="auth_password_strength_strong">Kuat</string>
+    <string name="auth_err_email_empty">Email tidak boleh kosong</string>
+    <string name="auth_err_email_invalid">Format email tidak valid (contoh: nama@email.com)</string>
+    <string name="auth_err_password_empty">Kata sandi tidak boleh kosong</string>
+    <string name="auth_err_password_short">Kata sandi minimal 6 karakter</string>
+    <string name="auth_err_name_empty">Nama lengkap tidak boleh kosong</string>
+    <string name="auth_err_instansi_empty">Asal instansi tidak boleh kosong</string>
+    <string name="auth_err_password_mismatch">Konfirmasi kata sandi tidak sama dengan kata sandi</string>
+
+    <!-- Revisi Bagian 1: Profil -->
+    <string name="profile_edit_title">Edit Profil</string>
+    <string name="profile_camera_btn">Kamera</string>
+    <string name="profile_gallery_btn">Galeri</string>
+    <string name="profile_photo_camera_selected">Foto dari Kamera Terpilih</string>
+    <string name="profile_photo_gallery_selected">Foto dari Galeri Terpilih</string>
+    <string name="profile_username_label">Username / Nama Lengkap</string>
+    <string name="profile_email_readonly_hint">Email tidak dapat diubah di halaman ini</string>
+    <string name="profile_recap_posttest_title">Rekap Skor Evaluasi (Post-Test)</string>
+    <string name="profile_recap_posttest_subtitle">Ketuk kartu untuk melihat nilai Post-Test lengkap per materi</string>
+    <string name="profile_recap_posttest_latest_label">Skor Post-Test Terakhir</string>
+    <string name="profile_recap_posttest_empty">Belum ada skor Post-Test</string>
+    <string name="profile_recap_posttest_tap_hint">Ketuk untuk lihat rincian lengkap</string>
+    <string name="profile_recap_posttest_modal_title">Nilai Lengkap Post-Test</string>
+    <string name="profile_recap_posttest_passed">Lulus</string>
+    <string name="profile_recap_posttest_not_passed">Belum Lulus</string>
+    <string name="profile_recap_posttest_best">Terbaik: %1$d/100</string>
+    <string name="profile_recap_posttest_latest">Terakhir: %1$d/100</string>
+    <string name="profile_section_achievements">Pencapaian Belajar</string>
+    <string name="profile_menu_saved_modules">Modul Tersimpan</string>
+    <string name="profile_menu_saved_modules_sub">Lihat daftar sub-materi yang kamu simpan</string>
+    <string name="profile_menu_certificates">Sertifikat Pembelajaran</string>
+    <string name="profile_menu_certificates_sub">Unduh &amp; bagikan sertifikat kelulusan PDF</string>
+    <string name="profile_section_advanced">Pengaturan Lanjutan</string>
+    <string name="profile_menu_language">Bahasa Aplikasi</string>
+    <string name="profile_menu_theme">Mode Gelap dan Terang</string>
+    <string name="profile_menu_security">Keamanan Akun</string>
+    <string name="profile_menu_security_sub">Ubah kata sandi dan kelola keamanan akun</string>
+    <string name="profile_leaderboard_sub">Pantau peringkat koin Harian &amp; Bulanan</string>
+    <string name="profile_logout_btn">Keluar dari Akun</string>
+    <string name="profile_logout_sub">Sampai jumpa lagi! Progres belajarmu tetap tersimpan aman.</string>
+    <string name="profile_logout_dialog_title">Istirahat Sebentar?</string>
+    <string name="profile_logout_dialog_body">Yakin ingin keluar dari akun FiksFaham sekarang? Semua koin, sertifikat, dan progres belajarmu tetap tersimpan aman kok!</string>
+    <string name="profile_logout_confirm">Ya, Keluar</string>
+    <string name="profile_logout_cancel">Tetap Belajar</string>
+
+    <!-- Revisi Bagian 2: Beranda Roadmap -->
+    <string name="home_roadmap_title">Jalur Belajar UI/UX</string>
+    <string name="home_roadmap_subtitle">Ikuti materi secara bertahap hingga Capstone Project</string>
+    <string name="home_roadmap_here">Kamu di sini</string>
+    <string name="home_roadmap_done">Selesai</string>
+    <string name="home_roadmap_not_started">Belum dimulai</string>
+    <string name="home_roadmap_sub_progress">%1$d/%2$d sub materi</string>
+    <string name="home_roadmap_capstone_title">Capstone Project Akhir</string>
+    <string name="home_roadmap_capstone_locked">Selesaikan Materi 1–5 untuk membuka Capstone</string>
+    <string name="home_roadmap_capstone_open">Siap dikerjakan &amp; dikumpulkan</string>
+    <string name="home_roadmap_capstone_review">Menunggu peninjauan mentor</string>
+    <string name="home_roadmap_capstone_done">Proyek akhir lulus</string>
+
+    <!-- Revisi Bagian 3: Burger Slider -->
+    <string name="drawer_menu_profile">Profil</string>
+    <string name="drawer_menu_gallery">Galeri Desain</string>
+    <string name="drawer_menu_discussion">Ruang Diskusi</string>
+    <string name="drawer_menu_leaderboard">Leaderboard</string>
+    <string name="drawer_menu_saved_modules">Modul Tersimpan (%1$d)</string>
+    <string name="drawer_menu_certificates">Sertifikat Pembelajaran</string>
+    <string name="drawer_menu_advanced_settings">Pengaturan Lanjutan</string>
+    <string name="drawer_menu_mentor">Menu Mentor</string>
+    <string name="drawer_discussion_picker_title">Pilih Materi Diskusi</string>
+    <string name="drawer_discussion_picker_sub">Pilih topik materi untuk membuka tanya jawab Q&amp;A</string>
+
+    <!-- Revisi Bagian 4: Materi & Sub-Materi -->
+    <string name="course_screen_title">Materi Pembelajaran</string>
+    <string name="course_screen_subtitle">Pilih materi pembelajaran untuk mulai belajar</string>
+    <string name="subtopic_open_discussion">Diskusi Materi</string>
+    <string name="subtopic_step_materi1">Materi 1</string>
+    <string name="subtopic_step_materi2">Materi 2</string>
+    <string name="subtopic_step_video">Video</string>
+    <string name="subtopic_quiz_popup_title">Siap Lanjut ke Kuis?</string>
+    <string name="subtopic_quiz_popup_body">Materi bacaan dan halaman video sudah kamu buka. Ingin langsung mengerjakan kuis sub-materi atau nanti saja?</string>
+    <string name="subtopic_quiz_popup_now">Lanjut ke Kuis</string>
+    <string name="subtopic_quiz_popup_later">Nanti</string>
+
+    <!-- Revisi Bagian 5: Galeri, Tantangan Desain & Ruang Diskusi Q&A -->
+    <string name="gallery_like_own_forbidden">Kamu tidak bisa menyukai karya milik sendiri.</string>
+    <string name="challenge_card_header">Tantangan Desain</string>
+    <string name="challenge_theme_label">Tema: %1$s</string>
+    <string name="challenge_period_label">Periode: %1$s - %2$s</string>
+    <string name="challenge_status_active">Aktif</string>
+    <string name="challenge_status_ended">Selesai</string>
+    <string name="challenge_join_btn">Ikut Tantangan</string>
+    <string name="challenge_joined_badge">Sudah Ikut</string>
+    <string name="challenge_manage_btn">Kelola Tantangan</string>
+    <string name="challenge_create_btn">Buat Tantangan</string>
+    <string name="challenge_pick_work_title">Pilih Karya Publikmu</string>
+    <string name="challenge_no_public_work">Kamu belum memiliki karya berstatus publik. Publikasikan tugas desain terlebih dahulu di Galeri Karyaku.</string>
+    <string name="challenge_winners_title">Klasemen Juara 1–3 (Poin Like Tertinggi)</string>
+    <string name="discussion_title">Ruang Diskusi Materi</string>
+    <string name="discussion_ask_title">Tanya Mentor &amp; Teman</string>
+    <string name="discussion_question_title_hint">Judul pertanyaan (contoh: Bingung soal kontras tombol)</string>
+    <string name="discussion_question_body_hint">Tulis detail pertanyaanmu tentang materi ini...</string>
+    <string name="discussion_send_question">Kirim Pertanyaan</string>
+    <string name="discussion_replies_count">%1$d Balasan</string>
+    <string name="discussion_reply_hint">Tulis jawaban atau tanggapanmu...</string>
+    <string name="discussion_mark_helpful">Tandai Membantu</string>
+    <string name="discussion_helpful_badge">Jawaban Membantu</string>
+    <string name="discussion_empty">Belum ada pertanyaan di materi ini. Jadilah yang pertama bertanya!</string>
+
+    <!-- Revisi Bagian 6: Leaderboard & Koin -->
+    <string name="leaderboard_tab_daily">Harian</string>
+    <string name="leaderboard_tab_monthly">Bulanan</string>
+    <string name="leaderboard_daily_reset_wib">Reset otomatis pukul 00:00 WIB (%1$s)</string>
+    <string name="leaderboard_monthly_period">Koin terkumpul bulan ini (%1$s WIB)</string>
+    <string name="leaderboard_your_position">Posisi Anda: #%1$d</string>
+    <string name="leaderboard_outside_top50">Di luar 50 besar • Selalu terpantau</string>
+    <string name="leaderboard_empty_title">Belum Ada Peringkat Koin</string>
+    <string name="leaderboard_empty_body">Selesaikan kuis, posttest, tugas desain, atau tantangan untuk mengumpulkan koin!</string>
+</resources>

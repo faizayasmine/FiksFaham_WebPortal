@@ -1,0 +1,352 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function: Memeriksa apakah user adalah Super Admin (Claim / staff / legacy admins)
+    function isAdmin() {
+      return request.auth != null && (
+        request.auth.token.role == 'superadmin' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        (exists(/databases/$(database)/documents/staff/$(request.auth.uid)) &&
+         get(/databases/$(database)/documents/staff/$(request.auth.uid)).data.aktif == true &&
+         get(/databases/$(database)/documents/staff/$(request.auth.uid)).data.role == 'superadmin')
+      );
+    }
+
+    // Helper function: Memeriksa apakah user adalah Fasilitator/Mentor (atau Super Admin)
+    function isMentor() {
+      return request.auth != null && (
+        isAdmin() ||
+        request.auth.token.role in ['fasilitator', 'mentor'] ||
+        exists(/databases/$(database)/documents/mentors/$(request.auth.uid)) ||
+        (exists(/databases/$(database)/documents/staff/$(request.auth.uid)) &&
+         get(/databases/$(database)/documents/staff/$(request.auth.uid)).data.aktif == true &&
+         get(/databases/$(database)/documents/staff/$(request.auth.uid)).data.role in ['fasilitator', 'mentor', 'superadmin'])
+      );
+    }
+
+    // Staff Portal Registry: Super Admin dapat mengelola akun staf;
+    // calon staf yang diundang lewat staff_invites (dengan email terverifikasi) boleh membuat profil stafnya sendiri
+    match /staff/{userId} {
+      allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      allow update, delete: if isAdmin();
+      allow create: if isAdmin() || (
+        request.auth != null
+        && request.auth.uid == userId
+        && request.auth.token.email_verified == true
+        && request.auth.token.email != null
+        && exists(/databases/$(database)/documents/staff_invites/$(request.auth.token.email.lower()))
+        && get(/databases/$(database)/documents/staff_invites/$(request.auth.token.email.lower())).data.aktif == true
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.aktif == true
+        && request.resource.data.role == get(/databases/$(database)/documents/staff_invites/$(request.auth.token.email.lower())).data.role
+        && request.resource.data.email.lower() == request.auth.token.email.lower()
+      );
+    }
+
+    // Undangan Staf via Email: Super Admin mengelola undangan; pemilik email dapat membaca & menandai klaim saat registrasi/login
+    match /staff_invites/{inviteEmail} {
+      allow read: if request.auth != null && (
+        isAdmin() ||
+        (request.auth.token.email != null && request.auth.token.email.lower() == inviteEmail)
+      );
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() || (
+        request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email != null
+        && request.auth.token.email.lower() == inviteEmail
+        && resource.data.aktif == true
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['claimedByUid', 'claimedAt'])
+        && request.resource.data.claimedByUid == request.auth.uid
+      );
+    }
+
+    // User Profile: Pengguna hanya boleh membaca & mengelola profilnya sendiri tanpa mengubah role/disabled
+    match /users/{userId} {
+      allow read: if request.auth != null && (request.auth.uid == userId || isMentor() || isAdmin());
+      allow create: if request.auth != null
+        && request.auth.uid == userId
+        && !('role' in request.resource.data)
+        && !('disabled' in request.resource.data);
+      allow update: if request.auth != null && (
+        isAdmin() ||
+        (
+          request.auth.uid == userId
+          && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'disabled'])
+        )
+      );
+      allow delete: if request.auth != null && (request.auth.uid == userId || isAdmin());
+
+      // Kunci cooldown Posttest per asesmen agar sinkron lintas sesi/perangkat
+      match /assessment_locks/{assessmentId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    // Leaderboard: Semua user terautentikasi bisa membaca, user hanya bisa menulis dokumen miliknya dengan validasi field
+    match /leaderboard/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.data.uid == request.auth.uid
+        && (!('totalPoints' in request.resource.data) || (request.resource.data.totalPoints is int && request.resource.data.totalPoints >= 0 && request.resource.data.totalPoints <= 100000));
+    }
+
+    // Leaderboard Koin Harian WIB: leaderboard_daily/{dateWib}/entries/{userId}
+    match /leaderboard_daily/{dateWib}/entries/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.data.uid == request.auth.uid
+        && (!('koin' in request.resource.data) || (request.resource.data.koin is int && request.resource.data.koin >= 0 && request.resource.data.koin <= 50000))
+        && (!('pointsToday' in request.resource.data) || (request.resource.data.pointsToday is int && request.resource.data.pointsToday >= 0 && request.resource.data.pointsToday <= 50000));
+    }
+
+    // Leaderboard Koin Bulanan WIB: leaderboard_monthly/{monthKey}/entries/{userId}
+    match /leaderboard_monthly/{monthKey}/entries/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.koin is int
+        && request.resource.data.koin >= 0
+        && request.resource.data.koin <= 250000;
+    }
+
+    // Mentors collection: Hanya untuk verifikasi peran mentor (read-only untuk user login)
+    match /mentors/{userId} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
+    // Capstone Submissions: ID dokumen = "{uid}_{materiId}" (atau "{uid}_0" untuk Capstone Akhir Tunggal)
+    match /capstone_submissions/{submissionId} {
+      // Mahasiswa hanya membaca miliknya, mentor/admin membaca semua
+      allow read: if request.auth != null && (
+        isMentor() || isAdmin() || resource.data.uid == request.auth.uid
+      );
+
+      // Mahasiswa membuat submission miliknya:
+      // - uid harus milik user yang login
+      // - status harus 'submitted'
+      // - dilarang mengisi nilai, feedback, reviewedBy, reviewedAt, rubricSummary saat submit
+      allow create: if request.auth != null
+        && request.resource.data.uid == request.auth.uid
+        && submissionId == request.auth.uid + '_' + string(request.resource.data.materiId)
+        && request.resource.data.status in ['submitted', 'pending']
+        && (!('revisionCount' in request.resource.data) || request.resource.data.revisionCount == 0)
+        && (!('nilai' in request.resource.data) || request.resource.data.nilai == null)
+        && (!('reviewedBy' in request.resource.data) || request.resource.data.reviewedBy == null)
+        && (!('reviewedAt' in request.resource.data) || request.resource.data.reviewedAt == null)
+        && (!('feedback' in request.resource.data) || request.resource.data.feedback == '')
+        && (!('rubricSummary' in request.resource.data) || request.resource.data.rubricSummary == '');
+
+      // Pembaruan submission:
+      // 1. Fasilitator / Super Admin memberi penilaian / status review
+      // 2. Mahasiswa mengajukan revisi (hanya saat status revision_needed/revision & revisionCount < 2) atau mengedit saat pending/submitted
+      allow update: if request.auth != null && (
+        (
+          isMentor()
+          && (isAdmin() || !(resource.data.status in ['approved', 'rejected']))
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'nilai', 'feedback', 'rubricSummary', 'reviewedBy', 'reviewedAt', 'predikat', 'lockedBy', 'lockedAt'])
+          && request.resource.data.status in ['submitted', 'pending', 'under_review', 'in_review', 'revision_needed', 'revision', 'approved', 'reviewed', 'rejected']
+          && (
+            request.resource.data.reviewedBy == request.auth.uid ||
+            (request.resource.data.status in ['submitted', 'pending'] && request.resource.data.reviewedBy == null)
+          )
+          && (
+            request.resource.data.nilai == null ||
+            (request.resource.data.nilai >= 0 && request.resource.data.nilai <= 100)
+          )
+        )
+        ||
+        (
+          resource.data.uid == request.auth.uid
+          && !(resource.data.status in ['approved', 'rejected'])
+          && request.resource.data.uid == request.auth.uid
+          && (
+            (
+              resource.data.status in ['submitted', 'pending']
+              && request.resource.data.status in ['submitted', 'pending']
+              && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['status', 'nilai', 'feedback', 'rubricSummary', 'reviewedBy', 'reviewedAt', 'revisionCount', 'predikat', 'lockedBy', 'lockedAt'])
+            )
+            ||
+            (
+              resource.data.status in ['revision_needed', 'revision']
+              && (!('revisionCount' in resource.data) || resource.data.revisionCount < 2)
+              && request.resource.data.status in ['submitted', 'pending']
+              && request.resource.data.revisionCount == (('revisionCount' in resource.data ? resource.data.revisionCount : 0) + 1)
+              && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['nilai', 'feedback', 'rubricSummary', 'reviewedBy', 'reviewedAt', 'predikat', 'lockedBy', 'lockedAt'])
+            )
+          )
+        )
+      );
+
+      // Riwayat rubrik per revisi (portal web & catatan evaluator)
+      match /reviews/{reviewId} {
+        allow read: if request.auth != null && (
+          isMentor() ||
+          isAdmin() ||
+          get(/databases/$(database)/documents/capstone_submissions/$(submissionId)).data.uid == request.auth.uid
+        );
+        allow create, update: if isMentor();
+        allow delete: if isAdmin();
+      }
+
+      // Pengguna dapat menghapus dokumen submission miliknya saat penghapusan akun (jika belum approved) atau admin
+      allow delete: if request.auth != null && (isAdmin() || resource.data.uid == request.auth.uid);
+    }
+
+    // Tugas Desain Submissions & Galeri Publik: ID dokumen = "{uid}_{subMateriId}"
+    match /design_task_submissions/{submissionId} {
+      allow read: if request.auth != null && (
+        resource.data.visibility == 'public' ||
+        resource.data.uid == request.auth.uid ||
+        isMentor() ||
+        isAdmin()
+      );
+      allow create: if request.auth != null
+        && request.resource.data.uid == request.auth.uid
+        && submissionId == request.auth.uid + '_' + string(request.resource.data.subMateriId);
+      allow update: if request.auth != null && (
+        (
+          request.resource.data.uid == request.auth.uid
+          && resource.data.uid == request.auth.uid
+          && submissionId == request.auth.uid + '_' + string(request.resource.data.subMateriId)
+        )
+        ||
+        (
+          resource.data.visibility == 'public'
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likeCount', 'likedBy'])
+        )
+      );
+      // Pemilik atau admin (moderasi) dapat menghapus desain
+      allow delete: if request.auth != null && (resource.data.uid == request.auth.uid || isAdmin());
+    }
+
+    // Certificates: Sertifikat kelulusan resmi; Super Admin dapat mencabut (revoked) atau memperbarui predikat
+    match /certificates/{certNumber} {
+      allow read: if request.auth != null;
+      allow create: if isMentor() || isAdmin() || (
+        request.auth != null
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.certificateNumber == certNumber
+      );
+      allow update: if isAdmin() || isMentor();
+      allow delete: if request.auth != null && (resource.data.uid == request.auth.uid || isAdmin());
+    }
+
+    // Cermin Publik Sertifikat untuk verifikasi tanpa login (hanya field publik non-sensitif)
+    match /certificates_public/{certNumber} {
+      allow read: if true;
+      allow write: if isMentor() || isAdmin();
+    }
+
+    // Konfigurasi Rubrik & Brief Capstone untuk Portal Web (hanya Super Admin yang menulis)
+    match /capstone_config/{configId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+
+    // Reports: Laporan konten karya galeri / diskusi untuk moderasi admin
+    match /reports/{reportId} {
+      allow read: if request.auth != null && (isAdmin() || resource.data.reporterUid == request.auth.uid);
+      allow create: if request.auth != null && request.resource.data.reporterUid == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+
+    // Discussions: Diskusi tanya jawab per Materi
+    match /discussions/{discussionId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+      allow update: if request.auth != null && (
+        resource.data.uid == request.auth.uid ||
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likeCount', 'likedBy', 'replyCount'])
+      );
+      allow delete: if request.auth != null && (resource.data.uid == request.auth.uid || isAdmin());
+    }
+
+    // Admins collection: Hanya untuk verifikasi peran admin (read-only untuk user login)
+    match /admins/{userId} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
+    // Inspirasi: Dibaca oleh semua user terautentikasi, kurasi (tulis/edit/hapus) hanya oleh admin
+    match /inspirasi/{docId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+
+    // Definisi Tugas Desain: Dibaca semua user login, dikelola oleh Admin atau Mentor
+    match /design_tasks/{taskId} {
+      allow read: if request.auth != null;
+      allow create, update, delete: if isAdmin() || isMentor();
+    }
+
+    // Tantangan Desain: Dibaca semua user login, dikelola oleh Admin atau Mentor
+    match /tantangan/{challengeId} {
+      allow read: if request.auth != null;
+      allow create, update, delete: if isAdmin() || isMentor();
+    }
+
+    // Peserta Tantangan Desain (`{challengeId}_{uid}`)
+    match /tantangan_peserta/{entryId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.participantUid == request.auth.uid;
+      allow update, delete: if request.auth != null
+        && (resource.data.participantUid == request.auth.uid || isMentor() || isAdmin());
+    }
+
+    // Like Event Karya Galeri (`likes/{submissionDocId}_{likerUid}`)
+    match /likes/{likeId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.likerUid == request.auth.uid
+        && request.resource.data.targetOwnerUid != request.auth.uid;
+      allow delete: if request.auth != null
+        && resource.data.likerUid == request.auth.uid;
+    }
+
+    // Ruang Diskusi Q&A per Materi (`posts` dan `replies`)
+    match /posts/{postId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+      allow update: if request.auth != null && (
+        resource.data.uid == request.auth.uid ||
+        isMentor() ||
+        isAdmin() ||
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['replyCount', 'hasHelpfulReply'])
+      );
+      allow delete: if request.auth != null && (
+        resource.data.uid == request.auth.uid || isMentor() || isAdmin()
+      );
+    }
+
+    match /replies/{replyId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+      allow update: if request.auth != null && (
+        resource.data.uid == request.auth.uid ||
+        isMentor() ||
+        isAdmin() ||
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['membantu', 'markedHelpfulByUid', 'markedHelpfulAt'])
+      );
+      allow delete: if request.auth != null && (
+        resource.data.uid == request.auth.uid || isMentor() || isAdmin()
+      );
+    }
+
+    // Log event koin lintas-pengguna (hanya Cloud Functions / server yang menulis)
+    match /koin_events/{eventId} {
+      allow read: if request.auth != null && resource.data.recipientUid == request.auth.uid;
+      allow write: if false;
+    }
+
+    // Default deny untuk path lainnya
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
