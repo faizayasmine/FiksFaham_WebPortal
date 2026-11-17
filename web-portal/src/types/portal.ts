@@ -285,3 +285,65 @@ export function calculatePredikat(score: number): string {
   if (score >= 75) return "Cakap";
   return "";
 }
+
+export interface MateriOption {
+  id: number;
+  title: string;
+}
+
+export const MATERI_LIST: MateriOption[] = [
+  { id: 1, title: "Pengantar dan Proses Desain" },
+  { id: 2, title: "Elemen dan Prinsip Desain" },
+  { id: 3, title: "Warna, Tipografi, dan Komposisi" },
+  { id: 4, title: "Riset, Ide, dan Visualisasi" },
+  { id: 5, title: "Penerapan Desain" },
+];
+
+export function getMateriTitle(materiId: number): string {
+  return (
+    MATERI_LIST.find((m) => m.id === materiId)?.title ?? `Materi ${materiId}`
+  );
+}
+
+export interface ForumPostDoc {
+  id: string;
+  materiId: number;
+  uid: string;
+  authorName: string;
+  authorRole: string;
+  title: string;
+  content: string;
+  createdAt: number;
+  replyCount: number;
+  hasHelpfulReply: boolean;
+  pinned: boolean;
+  locked: boolean;
+  hidden: boolean;
+}
+
+export interface ForumReplyDoc {
+  id: string;
+  postId: string;
+  materiId: number;
+  uid: string;
+  authorName: string;
+  authorRole: string;
+  content: string;
+  membantu: boolean;
+  markedHelpfulByUid?: string | null;
+  markedHelpfulAt?: number | null;
+  createdAt: number;
+}
+
+export interface ModerationReportDoc {
+  id: string;
+  targetType: string;
+  targetDocId: string;
+  targetOwnerUid: string;
+  reporterUid: string;
+  reason: string;
+  status: "open" | "resolved" | "dismissed";
+  createdAt: number;
+  resolvedBy?: string | null;
+  resolvedAt?: number | null;
+}

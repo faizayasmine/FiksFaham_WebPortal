@@ -6,6 +6,7 @@ import { auth, isFirebaseConfigured } from "./lib/firebase";
 import { CapstoneReviewPage } from "./pages/CapstoneReviewPage";
 import { CertificatesPage, VerifyCertificatePage } from "./pages/CertificatesPage";
 import { DashboardPage } from "./pages/DashboardPage";
+import { ForumPage } from "./pages/ForumPage";
 import { LoginPage } from "./pages/LoginPage";
 import { UsersAndStaffPage } from "./pages/UsersAndStaffPage";
 import { logoutStaffPortal, resolveCurrentStaffProfile } from "./services/authService";
@@ -112,6 +113,10 @@ function AuthenticatedPortal({
           }
         />
         <Route path="/capstone/:id" element={<CapstoneReviewPage staff={staff} />} />
+        <Route
+          path="/forum"
+          element={<ForumPage staff={staff} searchQuery={searchQuery} />}
+        />
         <Route
           path="/sertifikat"
           element={<CertificatesPage staff={staff} searchQuery={searchQuery} />}

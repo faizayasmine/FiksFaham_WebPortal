@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  MessageSquare,
   Moon,
   Search,
   ShieldCheck,
@@ -75,6 +76,7 @@ export function PortalLayout({
     { to: "/", label: "Dashboard", icon: LayoutDashboard },
     { to: "/antrean", label: "Antrean", icon: ClipboardCheck },
     { to: "/riwayat", label: "Riwayat", icon: History },
+    { to: "/forum", label: "Forum", icon: MessageSquare },
     { to: "/sertifikat", label: "Sertifikat", icon: Award },
     ...(staff.isSuperAdmin
       ? [{ to: "/kelola-akun", label: "Staf & Pengguna", icon: Users }]
@@ -89,6 +91,9 @@ export function PortalLayout({
         : "Mentor UI/UX";
 
   const searchPlaceholder = (() => {
+    if (location.pathname.startsWith("/forum")) {
+      return "Cari judul diskusi, isi pertanyaan, atau penulis...";
+    }
     if (location.pathname.startsWith("/kelola-akun")) {
       return "Cari nama, email, atau UID pengguna...";
     }

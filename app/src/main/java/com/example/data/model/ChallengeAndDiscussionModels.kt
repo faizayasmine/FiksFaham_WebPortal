@@ -44,7 +44,10 @@ data class QaPost(
     val content: String = "",
     val createdAt: Long = System.currentTimeMillis(),
     val replyCount: Int = 0,
-    val hasHelpfulReply: Boolean = false
+    val hasHelpfulReply: Boolean = false,
+    val pinned: Boolean = false,
+    val locked: Boolean = false,
+    val hidden: Boolean = false
 )
 
 /**

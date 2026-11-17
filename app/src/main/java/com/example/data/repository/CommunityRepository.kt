@@ -149,9 +149,14 @@ class CommunityRepository(
                 content = d["content"] as? String ?: "",
                 createdAt = (d["createdAt"] as? Number)?.toLong() ?: System.currentTimeMillis(),
                 replyCount = (d["replyCount"] as? Number)?.toInt() ?: 0,
-                hasHelpfulReply = d["hasHelpfulReply"] as? Boolean ?: false
+                hasHelpfulReply = d["hasHelpfulReply"] as? Boolean ?: false,
+                pinned = d["pinned"] as? Boolean ?: false,
+                locked = d["locked"] as? Boolean ?: false,
+                hidden = d["hidden"] as? Boolean ?: false
             )
-        }.sortedByDescending { it.createdAt }
+        }
+            .filter { !it.hidden }
+            .sortedWith(compareByDescending<QaPost> { it.pinned }.thenByDescending { it.createdAt })
     }
 
     suspend fun createQaPost(
@@ -226,6 +231,10 @@ class CommunityRepository(
     ): Result<QaReply> = runCatching {
         val clean = content.trim()
         require(clean.isNotBlank()) { "Isi balasan tidak boleh kosong." }
+        val postSnap = runCatching { db.collection("posts").document(postId).get().await() }.getOrNull()
+        require(postSnap?.data?.get("locked") != true) {
+            "Thread diskusi ini telah dikunci oleh fasilitator."
+        }
         val docRef = db.collection("replies").document()
         val reply = QaReply(
             id = docRef.id,

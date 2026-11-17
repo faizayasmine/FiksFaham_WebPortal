@@ -248,11 +248,18 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // Reports: Laporan konten karya galeri / diskusi untuk moderasi admin
+    // Reports: Laporan konten karya galeri / diskusi untuk moderasi Super Admin & Fasilitator (khusus forum)
     match /reports/{reportId} {
-      allow read: if request.auth != null && (isAdmin() || resource.data.reporterUid == request.auth.uid);
+      allow read: if request.auth != null && (
+        isAdmin() ||
+        resource.data.reporterUid == request.auth.uid ||
+        (isMentor() && resource.data.targetType in ['qa_post', 'qa_reply'])
+      );
       allow create: if request.auth != null && request.resource.data.reporterUid == request.auth.uid;
-      allow update, delete: if isAdmin();
+      allow update: if isAdmin() || (
+        isMentor() && resource.data.targetType in ['qa_post', 'qa_reply']
+      );
+      allow delete: if isAdmin();
     }
 
     // Discussions: Diskusi tanya jawab per Materi

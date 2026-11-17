@@ -28,6 +28,8 @@ import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.Forum
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material.icons.outlined.ThumbUp
@@ -392,16 +394,58 @@ fun DiscussionScreen(
                                                 fontSize = 13.sp,
                                                 color = FiksText
                                             )
-                                            if (post.authorRole == "mentor") {
+                                            val postRoleLabel = when (post.authorRole.lowercase()) {
+                                                "superadmin" -> "Super Admin"
+                                                "fasilitator" -> "Fasilitator"
+                                                "mentor" -> "Mentor"
+                                                else -> null
+                                            }
+                                            if (postRoleLabel != null) {
                                                 Surface(shape = RoundedCornerShape(6.dp), color = FiksPrimary.copy(alpha = 0.12f)) {
                                                     Text(
-                                                        text = "Mentor",
+                                                        text = postRoleLabel,
                                                         fontFamily = PoppinsFontFamily,
                                                         fontWeight = FontWeight.Bold,
                                                         fontSize = 9.sp,
                                                         color = FiksPrimary,
                                                         modifier = Modifier.padding(horizontal = 6.dp, vertical = 1.dp)
                                                     )
+                                                }
+                                            }
+                                            if (post.pinned) {
+                                                Surface(shape = RoundedCornerShape(6.dp), color = FiksPrimary.copy(alpha = 0.12f)) {
+                                                    Row(
+                                                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 1.dp),
+                                                        verticalAlignment = Alignment.CenterVertically,
+                                                        horizontalArrangement = Arrangement.spacedBy(2.dp)
+                                                    ) {
+                                                        Icon(Icons.Default.PushPin, contentDescription = null, tint = FiksPrimary, modifier = Modifier.size(10.dp))
+                                                        Text(
+                                                            text = "Disematkan",
+                                                            fontFamily = PoppinsFontFamily,
+                                                            fontWeight = FontWeight.Bold,
+                                                            fontSize = 9.sp,
+                                                            color = FiksPrimary
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                            if (post.locked) {
+                                                Surface(shape = RoundedCornerShape(6.dp), color = FiksTextMuted.copy(alpha = 0.15f)) {
+                                                    Row(
+                                                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 1.dp),
+                                                        verticalAlignment = Alignment.CenterVertically,
+                                                        horizontalArrangement = Arrangement.spacedBy(2.dp)
+                                                    ) {
+                                                        Icon(Icons.Default.Lock, contentDescription = null, tint = FiksTextMuted, modifier = Modifier.size(10.dp))
+                                                        Text(
+                                                            text = "Terkunci",
+                                                            fontFamily = PoppinsFontFamily,
+                                                            fontWeight = FontWeight.Bold,
+                                                            fontSize = 9.sp,
+                                                            color = FiksTextMuted
+                                                        )
+                                                    }
                                                 }
                                             }
                                         }
@@ -533,10 +577,16 @@ fun DiscussionScreen(
                                                             fontSize = 12.sp,
                                                             color = FiksText
                                                         )
-                                                        if (reply.authorRole == "mentor") {
+                                                        val replyRoleLabel = when (reply.authorRole.lowercase()) {
+                                                            "superadmin" -> "Super Admin"
+                                                            "fasilitator" -> "Fasilitator"
+                                                            "mentor" -> "Mentor"
+                                                            else -> null
+                                                        }
+                                                        if (replyRoleLabel != null) {
                                                             Surface(shape = RoundedCornerShape(6.dp), color = FiksPrimary.copy(alpha = 0.14f)) {
                                                                 Text(
-                                                                    text = "Mentor",
+                                                                    text = replyRoleLabel,
                                                                     fontFamily = PoppinsFontFamily,
                                                                     fontWeight = FontWeight.Bold,
                                                                     fontSize = 9.sp,
@@ -617,41 +667,69 @@ fun DiscussionScreen(
                                     }
 
                                     // Reply composer
-                                    val draft = replyDrafts[post.id].orEmpty()
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                    ) {
-                                        OutlinedTextField(
-                                            value = draft,
-                                            onValueChange = { replyDrafts = replyDrafts + (post.id to it) },
-                                            placeholder = { Text(stringResource(R.string.discussion_reply_hint), fontSize = 11.sp) },
-                                            singleLine = true,
-                                            colors = OutlinedTextFieldDefaults.colors(
-                                                focusedBorderColor = FiksPrimary,
-                                                unfocusedBorderColor = FiksCardBorder
-                                            ),
+                                    if (post.locked) {
+                                        Surface(
                                             shape = RoundedCornerShape(10.dp),
-                                            modifier = Modifier.weight(1f)
-                                        )
-                                        IconButton(
-                                            onClick = {
-                                                onAddReply(
-                                                    post.id,
-                                                    materiId,
-                                                    draft,
-                                                    { replyDrafts = replyDrafts + (post.id to "") },
-                                                    { err -> noticeIsError = true; noticeText = err }
-                                                )
-                                            },
-                                            enabled = draft.isNotBlank()
+                                            color = FiksBg,
+                                            border = BorderStroke(1.dp, FiksCardBorder),
+                                            modifier = Modifier.fillMaxWidth()
                                         ) {
-                                            Icon(
-                                                imageVector = Icons.Default.Send,
-                                                contentDescription = "Kirim Balasan",
-                                                tint = if (draft.isNotBlank()) FiksPrimary else FiksTextMuted
+                                            Row(
+                                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Lock,
+                                                    contentDescription = null,
+                                                    tint = FiksTextMuted,
+                                                    modifier = Modifier.size(14.dp)
+                                                )
+                                                Text(
+                                                    text = "Thread diskusi ini telah dikunci oleh fasilitator.",
+                                                    fontFamily = PoppinsFontFamily,
+                                                    fontSize = 11.sp,
+                                                    color = FiksTextMuted
+                                                )
+                                            }
+                                        }
+                                    } else {
+                                        val draft = replyDrafts[post.id].orEmpty()
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                        ) {
+                                            OutlinedTextField(
+                                                value = draft,
+                                                onValueChange = { replyDrafts = replyDrafts + (post.id to it) },
+                                                placeholder = { Text(stringResource(R.string.discussion_reply_hint), fontSize = 11.sp) },
+                                                singleLine = true,
+                                                colors = OutlinedTextFieldDefaults.colors(
+                                                    focusedBorderColor = FiksPrimary,
+                                                    unfocusedBorderColor = FiksCardBorder
+                                                ),
+                                                shape = RoundedCornerShape(10.dp),
+                                                modifier = Modifier.weight(1f)
                                             )
+                                            IconButton(
+                                                onClick = {
+                                                    onAddReply(
+                                                        post.id,
+                                                        materiId,
+                                                        draft,
+                                                        { replyDrafts = replyDrafts + (post.id to "") },
+                                                        { err -> noticeIsError = true; noticeText = err }
+                                                    )
+                                                },
+                                                enabled = draft.isNotBlank()
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Send,
+                                                    contentDescription = "Kirim Balasan",
+                                                    tint = if (draft.isNotBlank()) FiksPrimary else FiksTextMuted
+                                                )
+                                            }
                                         }
                                     }
                                 }

@@ -1,15 +1,18 @@
 import {
+  addDoc,
   collection,
   deleteDoc,
   doc,
   getDoc,
   getDocs,
+  increment,
   onSnapshot,
   orderBy,
   query,
   setDoc,
   Timestamp,
   updateDoc,
+  where,
   type Unsubscribe,
 } from "firebase/firestore";
 import { auth, db } from "../lib/firebase";
@@ -20,6 +23,9 @@ import {
   type CapstoneReviewHistoryDoc,
   type CapstoneSubmissionDoc,
   type CertificateDoc,
+  type ForumPostDoc,
+  type ForumReplyDoc,
+  type ModerationReportDoc,
   type PortalUserDoc,
   type StaffDoc,
   type StaffInviteDoc,
@@ -505,4 +511,286 @@ export async function findCertificateByNumber(
   const snap = await getDoc(doc(db, "certificates", clean));
   if (!snap.exists()) return null;
   return mapCertificateDoc(snap.id, snap.data());
+}
+
+// =========================================================================
+// FORUM DISKUSI Q&A PER MATERI (`posts`, `replies`, `reports`)
+// =========================================================================
+
+function mapForumPost(id: string, data: Record<string, unknown>): ForumPostDoc {
+  return {
+    id,
+    materiId: Number(data.materiId ?? 1),
+    uid: String(data.uid ?? ""),
+    authorName: String(data.authorName ?? "Pembelajar"),
+    authorRole: String(data.authorRole ?? "mahasiswa"),
+    title: String(data.title ?? ""),
+    content: String(data.content ?? ""),
+    createdAt: toMillis(data.createdAt, Date.now()),
+    replyCount: Number(data.replyCount ?? 0),
+    hasHelpfulReply: data.hasHelpfulReply === true,
+    pinned: data.pinned === true,
+    locked: data.locked === true,
+    hidden: data.hidden === true,
+  };
+}
+
+function mapForumReply(id: string, data: Record<string, unknown>): ForumReplyDoc {
+  return {
+    id,
+    postId: String(data.postId ?? ""),
+    materiId: Number(data.materiId ?? 1),
+    uid: String(data.uid ?? ""),
+    authorName: String(data.authorName ?? "Pembelajar"),
+    authorRole: String(data.authorRole ?? "mahasiswa"),
+    content: String(data.content ?? ""),
+    membantu: data.membantu === true,
+    markedHelpfulByUid: data.markedHelpfulByUid ? String(data.markedHelpfulByUid) : null,
+    markedHelpfulAt: data.markedHelpfulAt ? toMillis(data.markedHelpfulAt) : null,
+    createdAt: toMillis(data.createdAt, Date.now()),
+  };
+}
+
+export function subscribeForumPosts(
+  onData: (items: ForumPostDoc[]) => void,
+  onError: (err: Error) => void
+): Unsubscribe {
+  if (!db) {
+    onData([]);
+    return () => {};
+  }
+  return onSnapshot(
+    collection(db, "posts"),
+    (snap) => {
+      const items = snap.docs
+        .map((d) => mapForumPost(d.id, d.data()))
+        .sort((a, b) => {
+          if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
+          return b.createdAt - a.createdAt;
+        });
+      onData(items);
+    },
+    (err) => {
+      onError(new Error(err.message));
+    }
+  );
+}
+
+export async function listForumReplies(postId: string): Promise<ForumReplyDoc[]> {
+  if (!db) return [];
+  const snap = await getDocs(
+    query(collection(db, "replies"), where("postId", "==", postId))
+  );
+  return snap.docs
+    .map((d) => mapForumReply(d.id, d.data()))
+    .sort((a, b) => {
+      if (a.membantu !== b.membantu) return a.membantu ? -1 : 1;
+      return a.createdAt - b.createdAt;
+    });
+}
+
+export async function createForumPost(params: {
+  materiId: number;
+  uid: string;
+  authorName: string;
+  authorRole: string;
+  title: string;
+  content: string;
+  pinned?: boolean;
+}): Promise<string> {
+  if (!db) throw new Error("Firestore belum terkonfigurasi.");
+  const title = params.title.trim();
+  const content = params.content.trim();
+  if (!title || !content) {
+    throw new Error("Judul dan isi thread wajib diisi.");
+  }
+  const ref = await addDoc(collection(db, "posts"), {
+    materiId: params.materiId,
+    uid: params.uid,
+    authorName: params.authorName.trim() || "Fasilitator",
+    authorRole: params.authorRole,
+    title,
+    content,
+    createdAt: Date.now(),
+    replyCount: 0,
+    hasHelpfulReply: false,
+    pinned: Boolean(params.pinned),
+    locked: false,
+    hidden: false,
+  });
+  return ref.id;
+}
+
+export async function addForumReply(params: {
+  postId: string;
+  materiId: number;
+  uid: string;
+  authorName: string;
+  authorRole: string;
+  content: string;
+}): Promise<void> {
+  if (!db) throw new Error("Firestore belum terkonfigurasi.");
+  const content = params.content.trim();
+  if (!content) throw new Error("Isi balasan tidak boleh kosong.");
+  await addDoc(collection(db, "replies"), {
+    postId: params.postId,
+    materiId: params.materiId,
+    uid: params.uid,
+    authorName: params.authorName.trim() || "Fasilitator",
+    authorRole: params.authorRole,
+    content,
+    membantu: false,
+    createdAt: Date.now(),
+  });
+  try {
+    await updateDoc(doc(db, "posts", params.postId), {
+      replyCount: increment(1),
+    });
+  } catch {
+    // Abaikan jika post baru saja dihapus
+  }
+}
+
+export async function toggleForumReplyHelpful(
+  reply: ForumReplyDoc,
+  actorUid: string
+): Promise<void> {
+  if (!db) throw new Error("Firestore belum terkonfigurasi.");
+  const nextVal = !reply.membantu;
+  await updateDoc(doc(db, "replies", reply.id), {
+    membantu: nextVal,
+    markedHelpfulByUid: actorUid,
+    markedHelpfulAt: Date.now(),
+  });
+  try {
+    const replies = await listForumReplies(reply.postId);
+    const anyHelpful = replies.some((r) =>
+      r.id === reply.id ? nextVal : r.membantu
+    );
+    await updateDoc(doc(db, "posts", reply.postId), {
+      hasHelpfulReply: anyHelpful,
+    });
+  } catch {
+    // Non-blocking sync
+  }
+}
+
+export async function updateForumPostFlags(
+  postId: string,
+  patch: { pinned?: boolean; locked?: boolean; hidden?: boolean }
+): Promise<void> {
+  if (!db) throw new Error("Firestore belum terkonfigurasi.");
+  await updateDoc(doc(db, "posts", postId), patch);
+}
+
+export async function deleteForumPostCascade(postId: string): Promise<void> {
+  if (!db) throw new Error("Firestore belum terkonfigurasi.");
+  const repliesSnap = await getDocs(
+    query(collection(db, "replies"), where("postId", "==", postId))
+  );
+  await Promise.all(repliesSnap.docs.map((d) => deleteDoc(d.ref)));
+  await deleteDoc(doc(db, "posts", postId));
+}
+
+export async function deleteForumReplyAndSync(reply: ForumReplyDoc): Promise<void> {
+  if (!db) throw new Error("Firestore belum terkonfigurasi.");
+  await deleteDoc(doc(db, "replies", reply.id));
+  try {
+    const remaining = await listForumReplies(reply.postId);
+    await updateDoc(doc(db, "posts", reply.postId), {
+      replyCount: remaining.length,
+      hasHelpfulReply: remaining.some((r) => r.membantu),
+    });
+  } catch {
+    // Non-blocking jika post tidak ada
+  }
+}
+
+export async function listModerationReports(
+  staff: StaffSessionProfile
+): Promise<ModerationReportDoc[]> {
+  if (!db) return [];
+  const snap = staff.isSuperAdmin
+    ? await getDocs(collection(db, "reports"))
+    : await getDocs(
+        query(
+          collection(db, "reports"),
+          where("targetType", "in", ["qa_post", "qa_reply"])
+        )
+      );
+  return snap.docs
+    .map((d) => {
+      const data = d.data();
+      const rawStatus = String(data.status ?? "open").toLowerCase();
+      const status: ModerationReportDoc["status"] =
+        rawStatus === "resolved"
+          ? "resolved"
+          : rawStatus === "dismissed"
+            ? "dismissed"
+            : "open";
+      return {
+        id: d.id,
+        targetType: String(data.targetType ?? ""),
+        targetDocId: String(data.targetDocId ?? ""),
+        targetOwnerUid: String(data.targetOwnerUid ?? ""),
+        reporterUid: String(data.reporterUid ?? ""),
+        reason: String(data.reason ?? ""),
+        status,
+        createdAt: toMillis(data.createdAt, Date.now()),
+        resolvedBy: data.resolvedBy ? String(data.resolvedBy) : null,
+        resolvedAt: data.resolvedAt ? toMillis(data.resolvedAt) : null,
+      };
+    })
+    .sort((a, b) => {
+      if (a.status !== b.status) {
+        if (a.status === "open") return -1;
+        if (b.status === "open") return 1;
+      }
+      return b.createdAt - a.createdAt;
+    });
+}
+
+export async function resolveModerationReport(
+  reportId: string,
+  status: "resolved" | "dismissed",
+  actorUid: string
+): Promise<void> {
+  if (!db) throw new Error("Firestore belum terkonfigurasi.");
+  await updateDoc(doc(db, "reports", reportId), {
+    status,
+    resolvedBy: actorUid,
+    resolvedAt: Date.now(),
+  });
+}
+
+export async function deleteReportedContentAndResolve(
+  report: ModerationReportDoc,
+  actorUid: string
+): Promise<void> {
+  if (!db) throw new Error("Firestore belum terkonfigurasi.");
+  if (report.targetType === "qa_post" && report.targetDocId) {
+    try {
+      await deleteForumPostCascade(report.targetDocId);
+    } catch {
+      // Abaikan jika konten sudah terhapus sebelumnya
+    }
+  } else if (report.targetType === "qa_reply" && report.targetDocId) {
+    try {
+      const replySnap = await getDoc(doc(db, "replies", report.targetDocId));
+      if (replySnap.exists()) {
+        await deleteForumReplyAndSync(
+          mapForumReply(replySnap.id, replySnap.data())
+        );
+      }
+    } catch {
+      // Abaikan jika konten sudah terhapus sebelumnya
+    }
+  } else if (report.targetType === "design_task" && report.targetDocId) {
+    try {
+      await deleteDoc(doc(db, "design_task_submissions", report.targetDocId));
+    } catch {
+      // Abaikan jika tidak ditemukan
+    }
+  }
+  await resolveModerationReport(report.id, "resolved", actorUid);
 }
